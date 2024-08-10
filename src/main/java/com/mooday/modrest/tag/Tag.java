@@ -1,13 +1,11 @@
 package com.mooday.modrest.tag;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mooday.modrest.userConfig.UserConfig;
 import jakarta.persistence.*;
 import lombok.Data;
-
 import jakarta.validation.constraints.NotEmpty;
-
 import java.util.Set;
-
 
 @Entity
 @Data
@@ -29,5 +27,6 @@ public class Tag {
     private int usageCount = 0;
 
     @ManyToMany(mappedBy = "tags")
+    @JsonBackReference
     private Set<UserConfig> userConfigs;
 }

@@ -1,6 +1,5 @@
 package com.mooday.modrest.tag;
 
-import com.mooday.modrest.exception.ForbiddenException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
@@ -17,14 +16,27 @@ public class TagController {
     private TagService tagService;
 
     @GetMapping
-    public ResponseEntity<List<Tag>> getAllTags(@RequestParam(required = false) String name, @RequestParam(required = true) String lang) {
-        throw new ForbiddenException("ieeepa");
+    public ResponseEntity<List<Tag>> getAllTags(@RequestParam(required = false) String name, @Valid @RequestParam(required = true) String lang) {
+
+        if(lang == null || lang.isEmpty()) {
+            throw new IllegalArgumentException("lang is required");
+        }
+
+        List<Tag> tags = tagService.getAllTags(name, lang);
+        return ResponseEntity.ok().body(tags);
     }
 
     @PostMapping
     public ResponseEntity<Tag> createTag(@Valid @RequestBody Tag tag) {
         Tag createdTag = tagService.createTag(tag);
         return ResponseEntity.ok().body(createdTag);
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Tag> getTag(@PathVariable Long id) {
+        Tag tag = tagService.getTag(id);
+        return ResponseEntity.ok().body(tag);
     }
 
 
@@ -51,4 +63,5 @@ public class TagController {
         tagService.updateTag(id, tag);
         return ResponseEntity.ok().build();
     }
+
 }

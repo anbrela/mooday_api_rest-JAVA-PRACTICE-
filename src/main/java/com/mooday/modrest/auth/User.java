@@ -1,9 +1,10 @@
 package com.mooday.modrest.auth;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mooday.modrest.userConfig.UserConfig;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 @Entity
@@ -20,7 +21,9 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @OneToOne
+    @JoinColumn(name = "user_config_id")
+    @JsonIgnore
     private UserConfig userConfig;
+
 }

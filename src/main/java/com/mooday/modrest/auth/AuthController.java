@@ -2,7 +2,7 @@ package com.mooday.modrest.auth;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 
-import com.mooday.modrest.security.JwtTokenUtil;
+import com.mooday.modrest.security.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ public class AuthController {
     private GoogleAuthService googleAuthService;
 
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+    private JwtUtil jwtTokenUtil;
 
     @Autowired
     private UserService userService;
@@ -33,7 +33,7 @@ public class AuthController {
             GoogleIdToken.Payload payload = googleAuthService.verifyToken(googleToken);
             User user = userService.getOrCreateUser(payload);
             //7 days expiration
-            String token = jwtTokenUtil.generateTokenFromUser(user, new Date(System.currentTimeMillis() + 604800000));
+            String token = jwtTokenUtil.createToken(user);
             //revisar el mapeo por la referencia ciclica
             return ResponseEntity.ok(Map.of(  "user", user, "token", token));
         } catch (Exception e) {

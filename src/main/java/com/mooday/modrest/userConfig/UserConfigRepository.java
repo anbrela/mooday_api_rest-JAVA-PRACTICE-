@@ -1,6 +1,8 @@
 package com.mooday.modrest.userConfig;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserConfigRepository extends JpaRepository<UserConfig, Long> {
+@Repository
+public interface UserConfigRepository extends CrudRepository<UserConfig, Long> {
 }

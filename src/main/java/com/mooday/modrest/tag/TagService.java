@@ -2,6 +2,7 @@ package com.mooday.modrest.tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 
@@ -26,6 +27,10 @@ public class TagService {
         Tag tag = tagRepository.findById(id).orElseThrow();
         tag.setUsageCount(tag.getUsageCount() + 1);
         tagRepository.save(tag);
+    }
+
+    public Tag getTag(Long id) {
+        return tagRepository.findById(id).orElseThrow();
     }
 
     public void unuseTag(Long id) {

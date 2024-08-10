@@ -1,4 +1,4 @@
-package com.mooday.modrest.security;
+package com.mooday.modrest.services;
 
 import com.mooday.modrest.auth.User;
 import com.mooday.modrest.auth.UserRepository;
@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -19,11 +20,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found with email: " + username);
-        }
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), "", new ArrayList<>());
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
+        List<String> roles = new ArrayList<>();
+        roles.add("USER");
+        UserDetails userDetails =
+                org.springframework.security.core.userdetails.User.builder()
+                        .username(user.getEmail())
+                        .roles(roles.toArray(new String[0]))
+                        .build();
+        return userDetails;
     }
 }

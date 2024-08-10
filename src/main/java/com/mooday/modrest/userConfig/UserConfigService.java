@@ -21,13 +21,39 @@ public class UserConfigService {
     private TagRepository tagRepository;
 
     public UserConfig createUserConfig(User user, CreateUserConfigDto userConfigDto) {
-        UserConfig userConfig = new UserConfig();
+        try {
+        //check if user has a config
+            if(user  == null) {
+                throw new IllegalArgumentException("User not found");
+            }
 
+
+            //check if user has a config
+            UserConfig userConfig = user.getUserConfig();
+
+
+
+
+            if (userConfig != null) {
+            throw new IllegalArgumentException("User already has a configuration");
+        }
+
+
+            //if null create a new one
+        userConfig = new UserConfig();
         userConfig.setCheckTime(ZonedDateTime.parse(userConfigDto.getCheckTime()));
         userConfig.setUser(user);
-        Set<Tag> tags = new HashSet<>(tagRepository.findAllById(userConfigDto.getTagIds()));
+        user.setUserConfig(userConfig);
+        Set<Tag> tags = new HashSet<>();
+        for (Long tagId : userConfigDto.getTagIds()) {
+            Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new IllegalArgumentException("Invalid tag ID"));
+            tags.add(tag);
+        }
         userConfig.setTags(tags);
 
-        return userConfigRepository.save(userConfig);
+       return  userConfigRepository.save(userConfig);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 }
