@@ -22,7 +22,7 @@ public class UserConfig {
     @OneToOne(mappedBy = "userConfig", cascade = CascadeType.ALL)
     private User user;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_config_tags",
             joinColumns = @JoinColumn(name = "user_config_id"),

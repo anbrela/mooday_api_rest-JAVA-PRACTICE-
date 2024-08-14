@@ -1,11 +1,10 @@
 package com.mooday.modrest.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mooday.modrest.userConfig.UserConfig;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Data;
+
 
 @Entity
 @Data

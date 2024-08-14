@@ -1,6 +1,7 @@
 package com.mooday.modrest.tag;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mooday.modrest.userConfig.UserConfig;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -27,6 +28,6 @@ public class Tag {
     private int usageCount = 0;
 
     @ManyToMany(mappedBy = "tags")
-    @JsonBackReference
+    @JsonIgnore
     private Set<UserConfig> userConfigs;
 }

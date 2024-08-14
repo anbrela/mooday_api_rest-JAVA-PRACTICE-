@@ -2,10 +2,16 @@ package com.mooday.modrest.dayRate;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.mooday.modrest.auth.User;
 import com.mooday.modrest.tag.Tag;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -22,7 +28,10 @@ public class DayRate {
 
     private Double rate;
 
-    @ManyToMany
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "day_rate_tags",
             joinColumns = @JoinColumn(name = "day_rate_id"),
