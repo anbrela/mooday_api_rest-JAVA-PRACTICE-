@@ -1,12 +1,7 @@
 package com.mooday.modrest.tag;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mooday.modrest.userConfig.UserConfig;
 import jakarta.persistence.*;
 import lombok.Data;
-import jakarta.validation.constraints.NotEmpty;
-import java.util.Set;
 
 @Entity
 @Data
@@ -17,17 +12,15 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "Name is mandatory")
     @Column(unique = true, nullable = false)
     private String name;
 
-    @NotEmpty(message = "Language is mandatory")
     private String lang;
 
     @Column(nullable = false, columnDefinition = "int default 0")
     private int usageCount = 0;
 
-    @ManyToMany(mappedBy = "tags")
-    @JsonIgnore
-    private Set<UserConfig> userConfigs;
+    @Column(name = "user_id")
+    private Long userId;
+
 }

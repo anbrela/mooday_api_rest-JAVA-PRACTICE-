@@ -34,11 +34,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 
         //disable filter for "/api/auth/**" requests
-        if(request.getRequestURI().startsWith("/api/auth/")){
+        if (request.getRequestURI().startsWith("/api/auth/") ||
+                request.getRequestURI().startsWith("/swagger-ui/") ||
+                request.getRequestURI().startsWith("/api-docs/") ||
+                request.getRequestURI().startsWith("/swagger-ui.html")) {
+
             filterChain.doFilter(request, response);
             return;
         }
-
 
         try {
             String accessToken = jwtUtil.resolveToken(request);

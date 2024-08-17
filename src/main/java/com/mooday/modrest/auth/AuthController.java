@@ -3,6 +3,9 @@ package com.mooday.modrest.auth;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 
 import com.mooday.modrest.security.JwtUtil;
+import com.mooday.modrest.userConfig.UserConfigRepository;
+import com.mooday.modrest.userConfig.UserConfigService;
+import com.mooday.modrest.userConfig.dto.CreateUserConfigDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,9 @@ public class AuthController {
     private JwtUtil jwtTokenUtil;
 
     @Autowired
+    private UserConfigService userConfigService;
+
+    @Autowired
     private UserService userService;
 
     @PostMapping("/google")
@@ -34,7 +40,15 @@ public class AuthController {
             User user = userService.getOrCreateUser(payload);
             //7 days expiration
             String token = jwtTokenUtil.createToken(user);
-            //revisar el mapeo por la referencia ciclica
+
+            //get user config if not exists create one
+            CreateUserConfigDto dto = CreateUserConfigDto.builder()
+                    .checkTime("21:00")
+                    .build();
+            if(user.getUserConfig() == null) {
+                userConfigService.createUserConfig(user, dto);
+            }
+
             return ResponseEntity.ok(Map.of(  "user", user, "token", token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Google ID token");

@@ -1,5 +1,10 @@
 package com.mooday.modrest.tag;
 
+import com.mooday.modrest.auth.User;
+import com.mooday.modrest.security.JwtUtil;
+import com.mooday.modrest.tag.dto.CreateTagDto;
+import com.mooday.modrest.tag.mapper.TagMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,7 +17,23 @@ public class TagService {
     @Autowired
     private TagRepository tagRepository;
 
-    public Tag createTag(Tag tag) {
+    @Autowired
+    private TagMapper tagMapper;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public Tag createTag(CreateTagDto createTagDto, HttpServletRequest request) {
+
+        User user = this.jwtUtil.getUserFromToken(request.getHeader("Authorization").substring(7));
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        Tag tag = tagMapper.createTagDtoToTag(createTagDto);
+
+        tag.setUserId(user.getId());
+
         return tagRepository.save(tag);
     }
 
@@ -47,6 +68,20 @@ public class TagService {
         Tag existingTag = tagRepository.findById(id).orElseThrow();
         existingTag.setName(tag.getName());
         tagRepository.save(existingTag);
+    }
+
+
+    public List<Tag> getUserTags(String name, String lang, HttpServletRequest request) {
+        User user = this.jwtUtil.getUserFromToken(request.getHeader("Authorization").substring(7));
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        if (name == null || name.isEmpty()) {
+            return tagRepository.findAllByUserIdAndLangOrderByUsageCountDesc(user.getId(), lang);
+        }  else {
+            return tagRepository.findByUserIdAndNameContainingIgnoreCaseAndLangOrderByUsageCountDesc(user.getId(), name, lang);
+        }
     }
 
 

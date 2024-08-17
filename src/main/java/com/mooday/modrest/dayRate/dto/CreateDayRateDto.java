@@ -10,6 +10,8 @@ public class CreateDayRateDto {
     @NotNull(message = "Rate is mandatory")
     private Double rate;
 
+    private String date;
+
     List<Integer> tags;
 
     private String comment;

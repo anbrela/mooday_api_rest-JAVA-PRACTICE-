@@ -40,7 +40,10 @@ public class SecurityConfig  {
 
         http.csrf().disable()
                 .authorizeRequests()
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/**",
+                        "/swagger-ui/**",
+                        "/api-docs/**",
+                        "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);

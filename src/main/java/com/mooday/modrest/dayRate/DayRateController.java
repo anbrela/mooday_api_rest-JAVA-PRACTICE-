@@ -43,10 +43,9 @@ public class DayRateController {
 
     //get last 7 days
     @GetMapping("/last")
-    public List<DayRate> getLast7Days(HttpServletRequest request) {
+    public List<DayRateDomain> getLast7Days(HttpServletRequest request) {
         return dayRateService.getLast7Days(request);
     }
 
-    //delete day
 
 }

@@ -41,7 +41,11 @@ public class DayRateService {
         Long userId = jwtUtil.getUserFromToken(request.getHeader("Authorization").substring(7)).getId();
 
         DayRate dayRate = dayRateMapper.createDayRateDtoToDayRate(createDayRateDto);
-        String formattedDate = LocalDate.now().format(DATE_FORMATTER);
+        if(dayRate.getDate() == null) {
+            dayRate.setDate(LocalDate.now().format(DATE_FORMATTER));
+        }
+        String formattedDate = dayRate.getDate();
+
         Optional<DayRate> existingDayRateOptional = dayRateRepository.findByDateAndUserId(formattedDate, userId);
 
         Set<Tag> managedTags = dayRate.getTags().stream()
@@ -91,9 +95,11 @@ public class DayRateService {
 
     }
 
-    public List<DayRate> getLast7Days(HttpServletRequest request) {
+    public List<DayRateDomain> getLast7Days(HttpServletRequest request) {
         Long userId = jwtUtil.getUserFromToken(request.getHeader("Authorization").substring(7)).getId();
-        return dayRateRepository.findAllByUserIdAndDateBetweenOrderByDateDesc(userId, LocalDate.now().minusDays(7).format(DATE_FORMATTER), LocalDate.now().format(DATE_FORMATTER));
+        List<DayRate> rates = dayRateRepository.findAllByUserIdAndDateBetweenOrderByDateDesc(userId, LocalDate.now().minusDays(7).format(DATE_FORMATTER), LocalDate.now().format(DATE_FORMATTER));
+
+        return rates.stream().map(DayRateDomain::new).collect(Collectors.toList());
     }
 
     public void deleteDayRate(Long id) {

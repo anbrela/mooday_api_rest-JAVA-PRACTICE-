@@ -1,5 +1,7 @@
 package com.mooday.modrest.userConfig;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mooday.modrest.auth.User;
 import com.mooday.modrest.tag.Tag;
@@ -19,7 +21,9 @@ public class UserConfig {
 
     private ZonedDateTime checkTime;
 
-    @OneToOne(mappedBy = "userConfig", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -28,7 +32,6 @@ public class UserConfig {
             joinColumns = @JoinColumn(name = "user_config_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    @JsonManagedReference
     private Set<Tag> tags;
 
     @PrePersist
